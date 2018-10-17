@@ -152,17 +152,20 @@
                                 $opposingTeam = str_replace($date . '@', '', $gameInfo);
                             }
 
+                            //echo $opposingTeam;
+
                             if(strpos($opposingTeam, 'PM') !== ''){
                                 $opponent = strstr($opposingTeam, 'PM', true);
                                 $opponent = preg_replace('/[0-9]+/', '', $opponent);
-                                $opponent = preg_replace('/:/', '', $opponent);
+                                $opponent = trim(preg_replace('/:/', '', $opponent));
                                 $time = str_replace($opponent, '', $opposingTeam);
                                 $time = strstr($time , 'PM', true);
                                 $time = $time . ' PM';
+                                //echo $time;
                             }else{
                                 $opponent = strstr($opposingTeam, 'AM', true);
                                 $opponent = preg_replace('/[0-9]+/', '', $opponent);
-                                $opponent = preg_replace('/:/', '', $opponent);
+                                $opponent = trim(preg_replace('/:/', '', $opponent));
                                 $time = str_replace($opponent, '', $opposingTeam);
                                 $time = strstr($time , 'AM', true);
                                 $time = $time . ' AM';
@@ -172,38 +175,12 @@
                             // $opponent = preg_replace('/[0-9]+/', '', $opponent);
                             // $opponent = preg_replace('/:/', '', $opponent);
                             //$time = substr($opposingTeam, 0, strpos($opposingTeam, 'PM '));
-                            strpos($opposingTeam, 'PM');
+                            //strpos($opposingTeam, 'PM');
                             //$date = strpos('vs', $gameInfo);
                             echo '<hr>';
                             echo '<p>Date: ' . $date . '</p>';
                             echo '<p>Opponent: ' . $opponent . '</p>';
                             echo '<p>Time: ' . $time . '</p>';
-
-                            //echo $time . '<br>';
-
-                            //Fri, Dec 21vsNew Orleans 10:30 PM 1,747 tickets as low as $89 
-                            // $times = $lakers_xpath->query('//tbody[@class="Table2__tbody"]/tr/td ', $row);
-                            // echo $times;
-                            //$rowInfo = array(); //reset $pkmn_types for each pokemon
-                            //$date = $lakers_xpath->query('//tbody[@class="Table2__tbody"]/tr');
-
-                            //echo '<li>' . $date . '</li>';
-                            // foreach($row as $rowInfo){
-                            //     echo '<li>' . $rowInfo . '</li>';
-                            // }
-                               // $pkmn_types = array(); //reset $pkmn_types for each pokemon
-                    //         // $types = $pokemon_xpath->query('small[@class="aside"]/a', $pat);
-
-                    //         //loop through all the types and store them in the $pkmn_types array
-                    //         // foreach($types as $type){
-                    //         //     $pkmn_types[] = $type->nodeValue; //the pokemon type
-                    //         // }
-
-                    //         //store the data in the $pokemon_list array
-                    //         //$pokemon_list[] = array('name' => $name, 'types' => $pkmn_types);
-                    //         //echo '<li>' . $date . ' | ' . $opponent . ' | ' . $time  . '</li>';
-                    //         //echo '<li>' . $date . ' | ' . $opponent . ' | ' . $time  . '</li>';
-
 
                         }
 
