@@ -12,7 +12,7 @@
 
         <!-- Styles -->
         <style>
-            html, body {
+/*            html, body {
                 background-color: #fff;
                 color: #636b6f;
                 font-family: 'Nunito', sans-serif;
@@ -24,7 +24,7 @@
             .full-height {
                 height: 100vh;
             }
-
+*/
             .flex-center {
                 align-items: center;
                 display: flex;
@@ -119,18 +119,8 @@
                     //get all the h2's with an id
                     //ExpressionSelectingTable/tr[td//text()[contains(., 'targetString')]]
                     $sched_row = $lakers_xpath->query('//tbody[@class="Table2__tbody"]/tr');
-                    ////table[@class="info"]//td[2]/text()
-                    //$pokemon_and_type = $pokemon_xpath->query('//span[@class="infocard-tall "]');
 
-                    //print_r($sched_row);
-
-                    // if($sched_row->length > 0){
-
-                    //     foreach($sched_row as $row){
-                    //         echo '<li>' . $row->nodeValue . '</li>';
-                    //     }
-                        
-                    // }
+                    $schedule = array();
 
                     if($sched_row->length > 0){
 
@@ -139,17 +129,17 @@
                             //echo '<li>' . $row->nodeValue . '</li>';
 
                             $gameInfo = $row->nodeValue;
-                            // $date = substr($gameInfo, 0, strpos($gameInfo, 'vs'));
-                            // $date = substr($gameInfo, 0, strpos($gameInfo, '@'));
 
                             //echo '<li>' . $gameInfo . '</li>';
 
                             if(strpos($gameInfo, 'vs') == true){
                                 $date = substr($gameInfo, 0, strpos($gameInfo, 'vs'));
                                 $opposingTeam = str_replace($date . 'vs', '', $gameInfo);
+                                $location = 'home';
                             }else{
                                 $date = substr($gameInfo, 0, strpos($gameInfo, '@'));
                                 $opposingTeam = str_replace($date . '@', '', $gameInfo);
+                                $location = 'away';
                             }
 
                             //echo $opposingTeam;
@@ -171,21 +161,26 @@
                                 $time = $time . ' AM';
                             }
 
-                            // $opponent = strstr($opposingTeam, 'PM', true);
-                            // $opponent = preg_replace('/[0-9]+/', '', $opponent);
-                            // $opponent = preg_replace('/:/', '', $opponent);
-                            //$time = substr($opposingTeam, 0, strpos($opposingTeam, 'PM '));
-                            //strpos($opposingTeam, 'PM');
-                            //$date = strpos('vs', $gameInfo);
-                            echo '<hr>';
-                            echo '<p>Date: ' . $date . '</p>';
-                            echo '<p>Opponent: ' . $opponent . '</p>';
-                            echo '<p>Time: ' . $time . '</p>';
+                            // echo '<hr>';
+                            // echo '<p>Opponent: ' . $opponent . '</p>';
+
+                            // echo '<p>Date: ' . $date . '</p>';
+                            
+                            // echo '<p>Time: ' . $time . '</p>';
+
+                            // echo '<p>Location: ' . $location . '</p>';
+
+                            //store the data in the $pokemon_list array
+                            $schedule[] = array('opponent' => $opponent, 'date' => $date, 'time' => $time, 'location' => $location);
 
                         }
 
                     }
                 }
+
+                echo '<pre>';
+                print_r($schedule);
+                echo '</pre>';
                 ?>
                 <!-- <div class="links">
                     <a href="https://laravel.com/docs">Documentation</a>
