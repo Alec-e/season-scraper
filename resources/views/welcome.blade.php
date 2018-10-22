@@ -85,24 +85,22 @@
                 <section>
                 <?php
 
-                //if(!empty($html)){ //if any html is actually returned
+                $allNBA = ['bos', 'bkn','ny','phi','tor','chi','cle','det','ind','mil','den','min','okc','por','utah','gs','lac','lal','phx','sac','atl','cha', 'mia', 'orl', 'wsh', 'dal', 'hou', 'mem', 'no', 'sa'];
 
-                    //$pokemon_doc->loadHTML($html);
-                    //libxml_clear_errors(); //remove errors for yucky html
-                    
-                    //$pokemon_xpath = new DOMXPath($pokemon_doc);
+                $allNBAfull = ['Boston', 'Brooklyn','New York','Philadelphia','Toronto','Chicago','Cleveland','Detroit','Indiana','Milwaukee','Denver','Minnesota','Oklahoma City','Portland','Utah','Golden State','LA','Los Angeles','Phoenix','Sacramento','Atlanta','Charlotte', 'Miami', 'Orlando', 'Washington', 'Dallas', 'Houston', 'Memphis', 'New Orleans', 'San Antonio'];
 
-                    //get all the h2's with an id
-                //     $pokemon_row = $pokemon_xpath->query('//h2[@id]');
+                $twoNBA = ['New York', 'Oklahoma City', 'Golden State', 'Los Angeles', 'New Orleans', 'San Antonio'];
 
-                //     if($pokemon_row->length > 0){
-                //         foreach($pokemon_row as $row){
-                //             echo $row->nodeValue . "<br/>";
-                //         }
-                //     }
-                // }
-                //$lakers = file_get_contents('https://www.nba.com/lakers/schedule');
-                $lakers = file_get_contents('http://www.espn.com/nba/team/schedule/_/name/lal');
+               // function array_search_partial($arr, $keyword) {
+               //      foreach($arr as $index => $string) {
+               //          if (strpos($string, $keyword) !== FALSE){
+               //              return $index;
+               //          }
+               //      }
+               //  }
+                //function store_schedule(){}
+
+                $lakers = file_get_contents('http://www.espn.com/nba/team/schedule/_/name/utah');
                 $lakers_sched = new DOMDocument();
                 libxml_use_internal_errors(true);
 
@@ -132,47 +130,114 @@
 
                             //echo '<li>' . $gameInfo . '</li>';
 
-                            if(strpos($gameInfo, 'vs') == true){
-                                $date = substr($gameInfo, 0, strpos($gameInfo, 'vs'));
-                                $opposingTeam = str_replace($date . 'vs', '', $gameInfo);
-                                $location = 'home';
-                            }else{
-                                $date = substr($gameInfo, 0, strpos($gameInfo, '@'));
-                                $opposingTeam = str_replace($date . '@', '', $gameInfo);
-                                $location = 'away';
+
+                            // BYPASS ROWS THAT ARE NOT GAMES
+                            if(strpos($gameInfo, 'vs') == true || strpos($gameInfo, '@') == true){
+
+                                if(strpos($gameInfo, 'vs') == true){
+                                    $date = substr($gameInfo, 0, strpos($gameInfo, 'vs'));
+                                    $opposingTeam = str_replace($date . 'vs', '', $gameInfo);
+                                    $location = 'home';
+                                }else{
+                                    $date = substr($gameInfo, 0, strpos($gameInfo, '@'));
+                                    $opposingTeam = str_replace($date . '@', '', $gameInfo);
+                                    $location = 'away';
+                                }
+
+                                //echo '<hr>';
+
+                                //echo $opposingTeam;
+
+
+                                    // NEW GAMES
+                                    if(strpos($opposingTeam, 'PM') !== ''){
+                                        $opponent = strstr($opposingTeam, 'PM', true);
+                                        $opponent = preg_replace('/[0-9]+/', '', $opponent);
+                                        $opponent = trim(preg_replace('/:/', '', $opponent));
+                                        $time = str_replace($opponent, '', $opposingTeam);
+                                        $time = strstr($time , 'PM', true);
+                                        $time = $time . ' PM';
+                                        $status = '';
+                                        $score = '';
+                                    }
+
+
+                                    // COMPLETED GAMES
+                                    if(strpos($opposingTeam, 'PM') == ''){
+
+                                        $completedGame = explode(' ', $opposingTeam);
+
+                                        // echo '<pre>';
+                                        // print_r($completedGame);
+                                        // echo '</pre>';
+
+                                        $opponent = $completedGame['0'];
+
+                                        //echo $opponent;
+
+                                        if(!in_array($opponent, $allNBAfull)){
+
+                                            $completedGame = explode(' ', $opposingTeam);
+                                            $opponent = $completedGame['0'];
+                                            $opponent2 = NULL;
+                                            if (array_key_exists('1', $completedGame)) {
+                                                $opponent2 = $completedGame['1'];
+                                            }
+
+                                            $opponent = $opponent . ' ' . $opponent2;
+                                        }
+
+                                        $status = trim(str_replace($opponent, '', $opposingTeam));
+
+                                        $GameStatus = strstr($status, ' ', true);
+
+                                        //echo $GameStatus;
+
+                                        if(!empty($GameStatus)){$status = $GameStatus[0];}
+
+                                        //echo $status;
+
+                                        $score = str_replace($status, '', $GameStatus);                          
+
+                                        if($status == 'W'){
+                                            $status = 'win';
+                                        }elseif($status = 'L'){
+                                            $status = 'loss';
+                                        }
+
+                                        $time = 'passed';
+
+                                         //echo $status;
+
+                                         //echo 'Score: ' . $score;
+                                    
+                                    }
+
+                                    // else{
+                                    //     $opponent = strstr($opposingTeam, 'AM', true);
+                                    //     $opponent = preg_replace('/[0-9]+/', '', $opponent);
+                                    //     $opponent = trim(preg_replace('/:/', '', $opponent));
+                                    //     $time = str_replace($opponent, '', $opposingTeam);
+                                    //     $time = strstr($time , 'AM', true);
+                                    //     $time = $time . ' AM';
+                                    // }
+
+                                    //if($status !== ''){ echo '<p>Status: ' . $status . '</p>';};
+                                    
+                                    // echo '<p>Opponent: ' . $opponent . '</p>';
+
+                                    // echo '<p>Date: ' . $date . '</p>';
+                                    
+                                    // echo '<p>Time: ' . $time . '</p>';
+
+                                    // echo '<p>Location: ' . $location . '</p>';
+
+                                    if(!empty($score)){$score = $score;}
+
+                                    //store the data in the $pokemon_list array
+                                    $schedule[] = array('opponent' => $opponent, 'date' => $date, 'time' => $time, 'location' => $location, 'status'=> $status, 'score' => $score);
+
                             }
-
-                            //echo $opposingTeam;
-
-                            if(strpos($opposingTeam, 'PM') !== ''){
-                                $opponent = strstr($opposingTeam, 'PM', true);
-                                $opponent = preg_replace('/[0-9]+/', '', $opponent);
-                                $opponent = trim(preg_replace('/:/', '', $opponent));
-                                $time = str_replace($opponent, '', $opposingTeam);
-                                $time = strstr($time , 'PM', true);
-                                $time = $time . ' PM';
-                                //echo $time;
-                            }else{
-                                $opponent = strstr($opposingTeam, 'AM', true);
-                                $opponent = preg_replace('/[0-9]+/', '', $opponent);
-                                $opponent = trim(preg_replace('/:/', '', $opponent));
-                                $time = str_replace($opponent, '', $opposingTeam);
-                                $time = strstr($time , 'AM', true);
-                                $time = $time . ' AM';
-                            }
-
-                            // echo '<hr>';
-                            // echo '<p>Opponent: ' . $opponent . '</p>';
-
-                            // echo '<p>Date: ' . $date . '</p>';
-                            
-                            // echo '<p>Time: ' . $time . '</p>';
-
-                            // echo '<p>Location: ' . $location . '</p>';
-
-                            //store the data in the $pokemon_list array
-                            $schedule[] = array('opponent' => $opponent, 'date' => $date, 'time' => $time, 'location' => $location);
-
                         }
 
                     }
